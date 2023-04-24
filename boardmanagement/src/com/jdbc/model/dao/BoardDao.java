@@ -1,6 +1,6 @@
 package com.jdbc.model.dao;
 
-
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -12,90 +12,49 @@ import java.util.List;
 import java.util.Properties;
 import static com.jdbc.common.JDBCTemplate.*;
 
-import com.jdbc.model.dto.Member;
+import com.jdbc.model.dto.Board;
 
 public class BoardDao {
-	
 	Properties sql=new Properties();
 	{
-		String path=BoardDao.class.getResource("/sql/board/manage_sql.properties").getPath();
 		try {
+			String path=BoardDao.class.getResource("/sql/board/manage_sql.properties").getPath();
 			sql.load(new FileReader(path));
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public List<Member> selectMemberAll(Connection conn){
-		PreparedStatement pstmt=null;
-		ResultSet rs=null;
-		String sql=this.sql.getProperty("selectMemberAll");
-		List<Member> members=new ArrayList<>();
-		try {
-			pstmt=conn.prepareStatement(sql);
-			rs=pstmt.executeQuery();
-			while(rs.next()) {
-				members.add(getMember(rs));
-			}
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			close(rs);
-			close(pstmt);
-		}return members;
-	}
-	
-	public Member selectMemberById(Connection conn, String id) {
-		PreparedStatement pstmt=null;
-		ResultSet rs=null;
-		String sql=this.sql.getProperty("selectMemberById");
-		Member member=new Member();
-		try {
-			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, id);
-			rs=pstmt.executeQuery();
-			if(rs.next()) member=getMember(rs);
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			close(rs);
-			close(pstmt);
-		}return member;
 		
 	}
 	
-	public List<Member> selectMemberByName(Connection conn,String name){
+	public List<Board> selectBoardAll(Connection conn){
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		String sql=this.sql.getProperty("selectMemberByName");
-		List<Member> members=new ArrayList<>();
+		String sql=this.sql.getProperty("selectBoardAll");
+		List<Board> boards=new ArrayList<>();
 		try {
 			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, name);
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
-				members.add(getMember(rs));
+				boards.add(getBoard(rs));
 			}
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
 			close(rs);
 			close(pstmt);
-		}return members;
+		}return boards;
 	}
 	
-	public int insertMember(Connection conn,Member m) {
+	public int insertBoard(Connection conn,Board b) {
 		PreparedStatement pstmt=null;
-		String sql=this.sql.getProperty("insertMember");
+		String sql=this.sql.getProperty("insertBoard");
 		int result=0;
 		try {
 			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, m.getMemberId());
-			pstmt.setString(2, m.getMemberPwd());
-			pstmt.setString(3, m.getMemberName());
-			pstmt.setString(4, m.getEmail());
-			pstmt.setString(5, m.getAddress());
-			pstmt.setString(6, m.getPhone());
+			pstmt.setString(1, b.getIdv());
+			pstmt.setString(2, b.getTitle());
+			pstmt.setString(3, b.getContents());
+			pstmt.setInt(4, b.getIdx());
 			result=pstmt.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
@@ -104,18 +63,56 @@ public class BoardDao {
 		}return result;
 	}
 	
-	public int updateMember(Connection conn, Member m,int idx) {
+	public List<Board> selectBoardByWriter(Connection conn, int idx){
 		PreparedStatement pstmt=null;
-		String sql=this.sql.getProperty("updateMember");
-		int result=0;
+		ResultSet rs=null;
+		String sql=this.sql.getProperty("selectBoardByWriter");
+		List<Board> boards=new ArrayList();
 		try {
 			pstmt=conn.prepareStatement(sql);
-			pstmt.setString(1, m.getAddress());
-			pstmt.setString(2, m.getPhone());
-			pstmt.setString(3, m.getEmail());
-			pstmt.setInt(4, idx);
+			pstmt.setInt(1, idx);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				boards.add(getBoard(rs));
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(rs);
+			close(pstmt);
+		}return boards;
+	}
+	
+	public List<Board> selectBoardByTitle(Connection conn,String title){
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		List<Board> boards=new ArrayList<>();
+		String sql=this.sql.getProperty("selectBoardByTitle");
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, title);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				boards.add(getBoard(rs));
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(rs);
+			close(pstmt);
+		}return boards;
+	}
+	
+	public int updateBoard(Connection conn,Board b, int idx) {
+		int result=0;
+		PreparedStatement pstmt=null;
+		String sql=this.sql.getProperty("updateBoard");
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1,b.getTitle());
+			pstmt.setString(2, b.getContents());
+			pstmt.setInt(3, idx);
 			result=pstmt.executeUpdate();
-			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -123,10 +120,10 @@ public class BoardDao {
 		}return result;
 	}
 	
-	public int deleteMemeber(Connection conn,int idx) {
-		PreparedStatement pstmt=null;
-		String sql=this.sql.getProperty("deleteMember");
+	public int deleteBoard(Connection conn, int idx) {
 		int result=0;
+		PreparedStatement pstmt=null;
+		String sql=this.sql.getProperty("deleteBoard");
 		try {
 			pstmt=conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
@@ -139,24 +136,19 @@ public class BoardDao {
 	}
 	
 	
-	
-	
-	
-	
-	private Member getMember(ResultSet rs) throws SQLException{
-		Member m=new Member();
-		m.setIdx(rs.getInt("idx"));
-		m.setMemberId(rs.getString("member_id"));
-		m.setMemberPwd(rs.getString("member_pwd"));
-		m.setMemberName(rs.getString("member_name"));
-		m.setEmail(rs.getString("email"));
-		m.setAddress(rs.getString("address"));
-		m.setPhone(rs.getString("phone"));
-		m.setEnrollDate(rs.getDate("enroll_date"));
-		return m;
+	private Board getBoard(ResultSet rs) throws SQLException{
+		Board b=new Board();
+		b.setIdx(rs.getInt("idx"));
+		b.setIdv(rs.getString("idv"));
+		b.setTitle(rs.getString("title"));
+		b.setContents(rs.getString("contents"));
+		b.setWriter(rs.getInt("writer"));
+		b.setWrite_date(rs.getDate("write_date"));
+		return b;
 	}
 
 }
+
 
 
 

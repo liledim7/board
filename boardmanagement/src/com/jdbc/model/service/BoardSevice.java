@@ -5,57 +5,59 @@ import java.util.List;
 import static com.jdbc.common.JDBCTemplate.*;
 
 import com.jdbc.model.dao.BoardDao;
-import com.jdbc.model.dto.Member;
+import com.jdbc.model.dto.Board;
+
 
 public class BoardSevice {
 	BoardDao bd=new BoardDao();
-	public List<Member>selectMemberAll(){
+	public List<Board> selectBoardAll(){
 		Connection conn=getConnection();
-		List<Member> members=bd.selectMemberAll(conn);
+		List<Board> boards=bd.selectBoardAll(conn);
 		close(conn);
-		return members;
+		return boards;
 	}
 	
-	public Member selectMemberById(String id) {
+	public int insertBoard(Board board) {
 		Connection conn=getConnection();
-		Member member=bd.selectMemberById(conn,id);
-		close(conn);
-		return member;
-	}
-	
-	public List<Member> selectMemberByName(String name){
-		Connection conn=getConnection();
-		List<Member> members=bd.selectMemberByName(conn,name);
-		close(conn);
-		return members;
-	}
-	
-	public int insertMember(Member m) {
-		Connection conn=getConnection();
-		int result=bd.insertMember(conn,m);
+		int result=bd.insertBoard(conn,board);
 		if(result>0) commit(conn);
 		else rollback(conn);
 		close(conn);
 		return result;
 	}
 	
-	public int updateMember(Member m, int idx) {
+	public List<Board> selectBoardByWriter(int idx){
 		Connection conn=getConnection();
-		int result=bd.updateMember(conn,m,idx);
+		List<Board> boards=bd.selectBoardByWriter(conn, idx);
+		close(conn);
+		return boards;
+	}
+	
+	public List<Board> selectBoardByTitle(String title){
+		Connection conn=getConnection();
+		List<Board> boards=bd.selectBoardByTitle(conn, title);
+		close(conn);
+		return boards;
+	}
+	
+	public int updateBoard(Board b, int idx) {
+		Connection conn=getConnection();
+		int result=bd.updateBoard(conn, b, idx);
 		if(result>0) commit(conn);
 		else rollback(conn);
 		close(conn);
 		return result;
 	}
 	
-	public int deleteMember(int idx) {
+	public int deleteBoard(int idx) {
 		Connection conn=getConnection();
-		int result=bd.deleteMemeber(conn,idx);
+		int result=bd.deleteBoard(conn, idx);
 		if(result>0) commit(conn);
 		else rollback(conn);
 		close(conn);
 		return result;
 	}
+
 
 }
 
