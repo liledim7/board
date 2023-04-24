@@ -60,12 +60,15 @@ public class BoardController implements Controller{
 	public void updateMember() {
 		int idx=Integer.parseInt(new MainView().inputData("수정할 회원 idx"));
 		Member m=new MainView().updateMember();
+		int result=service.updateMember(m,idx);
+		new MainView().printMsg(result>0?"수정성공":"수정실패");
 	}
 
 	@Override
 	public void deleteMember() {
-		// TODO Auto-generated method stub
-		
+		int idx=Integer.parseInt(new MainView().inputData("탈퇴할 회원 idx"));
+		int result=service.deleteMember(idx);
+		new MainView().printMsg(result>0?"탈퇴성공":"탈퇴실패");
 	}
 
 	@Override

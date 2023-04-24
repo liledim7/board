@@ -38,6 +38,24 @@ public class BoardSevice {
 		close(conn);
 		return result;
 	}
+	
+	public int updateMember(Member m, int idx) {
+		Connection conn=getConnection();
+		int result=bd.updateMember(conn,m,idx);
+		if(result>0) commit(conn);
+		else rollback(conn);
+		close(conn);
+		return result;
+	}
+	
+	public int deleteMember(int idx) {
+		Connection conn=getConnection();
+		int result=bd.deleteMemeber(conn,idx);
+		if(result>0) commit(conn);
+		else rollback(conn);
+		close(conn);
+		return result;
+	}
 
 }
 

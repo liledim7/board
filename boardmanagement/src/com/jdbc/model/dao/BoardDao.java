@@ -104,6 +104,40 @@ public class BoardDao {
 		}return result;
 	}
 	
+	public int updateMember(Connection conn, Member m,int idx) {
+		PreparedStatement pstmt=null;
+		String sql=this.sql.getProperty("updateMember");
+		int result=0;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setString(1, m.getAddress());
+			pstmt.setString(2, m.getPhone());
+			pstmt.setString(3, m.getEmail());
+			pstmt.setInt(4, idx);
+			result=pstmt.executeUpdate();
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(pstmt);
+		}return result;
+	}
+	
+	public int deleteMemeber(Connection conn,int idx) {
+		PreparedStatement pstmt=null;
+		String sql=this.sql.getProperty("deleteMember");
+		int result=0;
+		try {
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, idx);
+			result=pstmt.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(pstmt);
+		}return result;
+	}
+	
 	
 	
 	

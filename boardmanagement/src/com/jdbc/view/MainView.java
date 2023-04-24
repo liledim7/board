@@ -77,7 +77,17 @@ public class MainView {
 		return m;
 	}
 	
-	
+	public Member updateMember() {
+		Scanner sc=new Scanner(System.in);
+		Member m=new Member();
+		System.out.print("새 주소:");
+		m.setAddress(sc.nextLine());
+		System.out.print("새 전화번호:");
+		m.setPhone(sc.nextLine());
+		System.out.print("새 이메일:");
+		m.setEmail(sc.nextLine());
+		return m;
+	}
 	
 	public void printMembers(List<Member> members) {
 		System.out.println("==== 회원 출력 ====");
@@ -90,6 +100,8 @@ public class MainView {
 	public void printMsg(String msg) {
 		System.out.println(msg);
 	}
+	
+	
 }
 
 
